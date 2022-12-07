@@ -1,0 +1,113 @@
+import React from "react";
+
+import {Search} from "@material-ui/icons"
+
+
+/* REACT BOOTSTRAP */
+import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
+
+/* REACT ROUTER BOOTSTRAP */
+import { LinkContainer } from "react-router-bootstrap";
+
+/* REACT - REDUX */
+import { useDispatch, useSelector } from "react-redux";
+
+/* ACTION CREATORS */
+import { logout } from "../actions/userActions";
+
+/* COMPONENTS */
+import SearchBox from "./SearchBox";
+
+import logo from "../logo.png";
+import Announcements from "./Announcements";
+
+function Header() {
+  /* PULLING A PART OF STATE FROM THE ACTUAL STATE IN THE REDUX STORE */
+  const userLogin = useSelector((state) => state.userLogin);
+
+  const { userInfo } = userLogin;
+
+  /* HANDLER */
+  const dispatch = useDispatch();
+
+  const logoutHandler = () => {
+    dispatch(logout());
+  };
+
+  return (
+
+    <>
+
+
+    <header>
+
+      <Navbar style={{backgroundColor:"white",boxShadow:"2px 2px 2px", height:"90px", color:"black"
+}} expand="lg" collapseOnSelect>
+        <Container>
+          <LinkContainer to="/">
+            <Navbar.Brand>
+              <h1 style={{color:"black",fontFamily: " 'Zen Dots', cursive"}} >TOYCHAN</h1>
+            </Navbar.Brand>
+          </LinkContainer>
+
+          <Navbar.Toggle aria-controls="navbarScroll" />
+
+          <Navbar.Collapse id="navbarScroll">
+            <SearchBox />
+
+            <Nav
+              className="ms-auto my-2 my-lg-0"
+              style={{ maxHeight: "100px" }}
+              navbarScroll
+            >
+              <LinkContainer to="/cart">
+                <Nav.Link style={{color:"white"}}>
+                  <i style={{color:"black"}} className="fas fa-shopping-cart"></i> <span style={{color:"black"}} >Cart</span> 
+                </Nav.Link>
+              </LinkContainer>
+
+              {userInfo ? (
+                <NavDropdown title={userInfo.name} id="username">
+                  <LinkContainer to="/profile">
+                    <NavDropdown.Item>Profile</NavDropdown.Item>
+                  </LinkContainer>
+
+                  <NavDropdown.Item onClick={logoutHandler}>
+                    Logout
+                  </NavDropdown.Item>
+                </NavDropdown>
+              ) : (
+                <LinkContainer to="/login">
+                  <Nav.Link>
+                    <i style={{color:"black"}} className="fas fa-user"></i> <span style={{color:"black"}}>Login</span> 
+                  </Nav.Link>
+                </LinkContainer>
+              )}
+
+              {userInfo && userInfo.isAdmin && (
+                <NavDropdown title="Admin" id="adminmenu">
+                  <LinkContainer to="/admin/userlist">
+                    <NavDropdown.Item>Users</NavDropdown.Item>
+                  </LinkContainer>
+
+                  <LinkContainer to="/admin/productlist">
+                    <NavDropdown.Item>Products</NavDropdown.Item>
+                  </LinkContainer>
+
+                  <LinkContainer to="/admin/orderlist">
+                    <NavDropdown.Item>Orders</NavDropdown.Item>
+                  </LinkContainer>
+                </NavDropdown>
+              )}
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+      <Announcements/>  
+
+    </header>
+    </>
+  );
+}
+
+export default Header;
